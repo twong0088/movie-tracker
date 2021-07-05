@@ -8,12 +8,19 @@
       Home
     </button>
     <button
+      value='results'
+      :class='page==="results" ? "selected": "notSelected"'
+      @click="handlePageChange"
+    >
+      Search Results
+    </button>
+    <!-- <button
       value='favorites'
       :class='page==="favorites" ? "selected": "notSelected"'
       @click="handlePageChange"
     >
       Favorites
-    </button>
+    </button> -->
     <button
       value='watchList'
       :class='page==="watchList" ? "selected": "notSelected"'

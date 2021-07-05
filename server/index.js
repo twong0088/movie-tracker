@@ -1,28 +1,8 @@
-// const Path = require('path');
-// const Hapi = require('@hapi/hapi');
-// const Inert = require('@hapi/inert');                    // [1]
-// const server = new Hapi.Server();
-// server.connection({ port: 3000 });
-// server.register(Inert, (err) => {                  // [2]
-//   server.route({
-//     method: 'GET',
-//     path: '/{param*}',
-//     handler: {                                     // [3]
-//       directory: {                                 // [3]
-//         path: Path.join(__dirname, 'public'),      // [3]
-//         listing: true                              // [3]
-//       }                                            // [3]
-//     }                                              // [3]
-//   });
-//   server.start((err) => {
-//     console.log(`Server running at: ${server.info.uri}`);
-//   });
-// });
-
-
-
+/* eslint-disable no-unused-vars */
 const Hapi = require('@hapi/hapi');
 const axios = require('axios');
+const { dummy } = require('./dummyData.js');
+const psql = require('./DB/controller/index.js');
 
 const init = async () => {
 
@@ -30,9 +10,6 @@ const init = async () => {
         port: 3000,
         host: 'localhost',
         routes: {
-          // files: {
-          //     relativeTo: Path.join(__dirname, '../public/index.html')
-          // }
           cors: {
             origin: ["http://localhost:8080"],
             headers: ["Accept", "Content-Type"],
@@ -41,42 +18,106 @@ const init = async () => {
       }
     });
 
-    // console.log(Path.join(__dirname, '../dist'))
-    // await server.register(Inert);
-
-    // server.route({
-    //     method: 'GET',
-    //     path: '/',
-    //     handler: {
-    //       directory: {
-    //           path: Path.join(__dirname, '../public'),
-    //           index: ['index.html', 'default.html']
-    //       }
-    //   }
-    // });
-
-    // server.route({
-    //     method: 'GET',
-    //     path: '/top10',
-    //     handler: (request, h) => {
-    //         axios.get(`http://www.omdbapi.com/?apikey=55578ba&`)
-    //         return 'Hello World!';
-    //     }
-    // });
-
     server.route({
       method: 'GET',
       path: '/search/{title}',
       handler: async(request, h) => {
-          const result = await axios.get(`http://www.omdbapi.com/?s=${request.params.title}&page=1&apikey=55578ba5`);
+        // console.log('title searched: ', request.params.title);
+          const result = await axios.get(`http://www.omdbapi.com/?s=${request.params.title}&type=movie&page=1&apikey=55578ba5`);
 
           if (!result) {
             return null;
           } else {
-            return result.data;
+            const results = [];
+            const data = result.data.Search;
+
+            for (let i = 0; i < data.length; i++) {
+              const movieDetails = await axios.get(`http://www.omdbapi.com/?i=${data[i].imdbID}&apikey=55578ba5`);
+              results.push(movieDetails.data)
+            }
+            return results;
           }
+        }
+    });
+
+    server.route({
+      method: 'GET',
+      path: '/personal-list',
+      handler: async(request, h) => {
+        psql.getPersonalList((err, res) => {
+          if (err) {
+            return err;
+          } else {
+            return res.data;
+          }
+        });
       }
-  });
+    });
+
+    server.route({
+      method: 'GET',
+      path: '/top10',
+      handler: async(request, h) => {
+        return dummy;
+      }
+    });
+
+    server.route({
+      method: 'POST',
+      path: '/addtowatch',
+      handler: async(request, h) => {
+        psql.addToWatchList(request.body, (err) => {
+          if (err) {
+            return err;
+          } else {
+            return '201';
+          }
+        })
+      }
+    })
+
+    server.route({
+      method: 'PUT',
+      path: '/seen/{movieid}',
+      handler: async(request, h) => {
+        console.log(request.params.user, request.params.movieid);
+        psql.addToSeen(request.params.movieid, (err) => {
+          if (err) {
+            return err;
+          } else {
+            return '200';
+          }
+        });
+      }
+    })
+
+    server.route({
+      method: 'PUT',
+      path: '/rewatch/{movieid}',
+      handler: async(request, h) => {
+        psql.rewatch(request.params.movieid, (err) => {
+          if (err) {
+            return err;
+          } else {
+            return '200';
+          }
+        });
+      }
+    })
+
+    server.route({
+      method: 'DELETE',
+      path: '/remove/{movieid}',
+      handler: async(request, h) => {
+        psql.removeFromLists(request.params.movieid, (err) => {
+          if (err) {
+            return err;
+          } else {
+            return '200';
+          }
+        });
+      }
+    })
 
     await server.start();
 

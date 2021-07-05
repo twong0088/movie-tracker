@@ -6,10 +6,10 @@
       lazy
     >
     <button
-      id='clearForm'
-      @click='clearForm'
+      id='Search'
+      @click='searchTitle'
     >
-      clear
+      Search
     </button>
   </div>
 </template>
@@ -25,14 +25,16 @@
     props: {
       setSearchTerm: Function
     },
-    watch: {
-      searchTerm: function(val) {
-        // console.log(val);
-        this.setSearchTerm(val);
-      }
-    },
+    // watch: {
+    //   searchTerm: function(val) {
+    //     // console.log(val);
+    //     this.setSearchTerm(val);
+    //   }
+    // },
     methods: {
-      clearForm() {
+      searchTitle() {
+        console.log('searchTitle: ', this.searchTerm);
+        this.setSearchTerm(this.searchTerm);
         this.searchTerm = '';
       }
     }

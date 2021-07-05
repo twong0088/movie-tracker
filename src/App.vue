@@ -30,8 +30,13 @@
         movies: this.top10,
         page: 'home',
         top10: [],
-        personalList: []
+        personalList: [],
+        searched: [],
       }
+    },
+    created() {
+      console.log('triggered created');
+      this.onLoad();
     },
     methods: {
       changePage(page) {
@@ -41,14 +46,10 @@
       filterMovies() {
         switch(this.page) {
           case 'home':
-            if (this.searched.length === 0) {
-              console.log('blank triggered', )
-              this.movies = this.top10;
-            } else {
-              console.log('triggered');
+            this.movies = this.top10;
+            break;
+          case 'results':
               this.movies = this.searched;
-              console.log('movie:', this.movie);
-            }
             break;
           case 'favorites':
             this.movies = this.personalList.filter(movie => movie.favorite === true);
@@ -66,6 +67,7 @@
       //   this.searchMovie(term);
       // },
       async onLoad() {
+        // console.log('onload triggered');
         await axios.get(`http://${window.location.hostname}:3000/top10`)
           .then(res => {
             this.top10 = res.data;
@@ -78,17 +80,21 @@
           .then(res => {
             this.personalList = res.data
           })
+          .then(() => {
+            this.changePage('home');
+          })
           .catch(err => {
             console.log(err);
           });
       },
       async searchMovie(title) {
         // axios.defaults.baseURL = 'http://api.openweathermap.org';
+        console.log('title: ', title);
         await axios.get(`http://${window.location.hostname}:3000/search/${title}`)
           .then(res => {
             console.log('res.data:', res.data)
-            this.searched = res.data.Search;
-            this.changePage('home');
+            this.searched = res.data;
+            this.changePage('results');
           })
           .catch(err => {
             console.log(err);
