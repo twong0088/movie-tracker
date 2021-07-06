@@ -36,7 +36,6 @@
       }
     },
     created() {
-      console.log('triggered created');
       this.onLoad();
     },
     methods: {
@@ -56,7 +55,6 @@
             this.movies = this.personalList.filter(movie => movie.favorite === true);
             break;
           case 'watchList':
-            console.log(this.personalList.length);
             this.movies = this.personalList.filter(movie => movie.status === 'watchList');
             break;
           case 'seen':
@@ -64,12 +62,7 @@
             break;
         }
       },
-      // setSearchTerm(term) {
-      //   console.log(term);
-      //   this.searchMovie(term);
-      // },
       async onLoad() {
-        // console.log('onload triggered');
         await axios.get(`http://${window.location.hostname}:3000/top10`)
           .then(res => {
             this.top10 = res.data;
@@ -83,7 +76,6 @@
 
         await axios.get(`http://${window.location.hostname}:3000/personal-list`)
           .then(res => {
-            console.log('res.data: ', res.data)
             const list = [];
             res.data.forEach(movie => {
               const obj = {
@@ -104,11 +96,8 @@
           });
       },
       async searchMovie(title) {
-        // axios.defaults.baseURL = 'http://api.openweathermap.org';
-        console.log('title: ', title);
         await axios.get(`http://${window.location.hostname}:3000/search/${title}`)
           .then(res => {
-            console.log('res.data:', res.data)
             this.searched = res.data;
             this.changePage('results');
           })
@@ -117,7 +106,6 @@
           })
       },
       reload(movie) {
-        console.log('reload triggered');
         this.personalList.splice(this.personalList.length, 0, movie);
         this.changePage(this.page);
       },

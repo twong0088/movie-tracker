@@ -14,13 +14,6 @@
     >
       Search Results
     </button>
-    <!-- <button
-      value='favorites'
-      :class='page==="favorites" ? "selected": "notSelected"'
-      @click="handlePageChange"
-    >
-      Favorites
-    </button> -->
     <button
       value='watchList'
       :class='page==="watchList" ? "selected": "notSelected"'
@@ -47,7 +40,6 @@
     },
     methods: {
       handlePageChange(e) {
-        // console.log('clicked: ', e.target.value);
         this.changePage(e.target.value);
       }
     }
@@ -64,7 +56,6 @@
     background-color: Transparent;
     background-repeat:no-repeat;
     color: #c9d1da;
-    /* font-size: large; */
     margin-bottom: 10px;
     font-size: 20px;
     border: none;

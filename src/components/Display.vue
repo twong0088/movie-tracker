@@ -95,9 +95,6 @@
 </script>
 
 <style scoped>
-  /* Display {
-    overflow: scroll;
-  } */
   #display {
     display: flex;
     flex-direction: row;
