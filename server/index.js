@@ -75,13 +75,6 @@ const init = async () => {
           console.log(err);
         }
         return result ? '201' : 'err';
-        // psql.addToWatchList(request.body, (err) => {
-        //   if (err) {
-        //     return err;
-        //   } else {
-        //     return '201';
-        //   }
-        // })
       }
     })
 
@@ -104,13 +97,13 @@ const init = async () => {
       method: 'PUT',
       path: '/rewatch/{movieid}',
       handler: async(request, h) => {
-        psql.rewatch(request.params.movieid, (err) => {
-          if (err) {
-            return err;
-          } else {
-            return '200';
-          }
-        });
+        let result;
+        try {
+          result = psql.rewatch(request.params.movieid);
+        } catch(err) {
+          console.log(err);
+        }
+        return result ? '200' : 'err'
       }
     })
 
@@ -118,13 +111,13 @@ const init = async () => {
       method: 'DELETE',
       path: '/remove/{movieid}',
       handler: async(request, h) => {
-        psql.removeFromLists(request.params.movieid, (err) => {
-          if (err) {
-            return err;
-          } else {
-            return '200';
-          }
-        });
+        let result;
+        try {
+          result = psql.removeFromLists(request.params.movieid);
+        } catch(err) {
+          console.log(err);
+        }
+        return result ? '200' : 'err';
       }
     })
 

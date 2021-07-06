@@ -75,12 +75,18 @@
       },
       async remove(movieid) {
         await axios.delete(`http://${window.location.hostname}:3000/remove/${movieid}`)
-          .then(() => {console.log('success')})
+          .then(() => {
+            console.log('success')
+            this.changeStatus(movieid, null);
+          })
           .catch((err) => {console.log(err)});
       },
       async rewatch(movieid) {
         await axios.put(`http://${window.location.hostname}:3000/rewatch/${movieid}`)
-          .then(() => {console.log('success')})
+          .then(() => {
+            console.log('success')
+            this.changeStatus(movieid, 'watchList');
+          })
           .catch((err) => {console.log(err)});
       }
 

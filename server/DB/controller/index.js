@@ -42,22 +42,12 @@ const addToSeen = (movieId) => {
   pool.query(`UPDATE movielist SET movie_status = 'seen' WHERE movielist.imdbID = '${movieId}' RETURNING imdbid`);
 };
 
-const rewatch = (movieId, callback) => {
-  pool.query(`UPDATE movielist SET movie_status = 'watchList' WHERE movielist.imdbID = ${movieId}`, (err) => {
-    if (err) {
-      callback(err);
-    }
-  });
+const rewatch = (movieId) => {
+  pool.query(`UPDATE movielist SET movie_status = 'watchList' WHERE movielist.imdbID = '${movieId}' RETURNING imdbid`);
 };
 
-const removeFromLists = (movieId, callback) => {
-  pool.query(`DELETE FROM movielist WHERE movielist.imdbID = ${movieId}`, (err, res) => {
-    if (err) {
-      callback(err);
-    } else {
-      callback(null, res);
-    }
-  });
+const removeFromLists = (movieId) => {
+  pool.query(`DELETE FROM movielist WHERE movielist.imdbID = '${movieId}' RETURNING *`);
 }
 
 
