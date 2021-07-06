@@ -90,13 +90,13 @@ const init = async () => {
       path: '/seen/{movieid}',
       handler: async(request, h) => {
         console.log(request.params.user, request.params.movieid);
-        psql.addToSeen(request.params.movieid, (err) => {
-          if (err) {
-            return err;
-          } else {
-            return '200';
-          }
-        });
+        let result;
+        try {
+          result = psql.addToSeen(request.params.movieid);
+        } catch(err) {
+          console.log(err)
+        }
+        return result ? '200' : 'err'
       }
     })
 

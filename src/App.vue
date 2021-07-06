@@ -8,7 +8,7 @@
     </div>
     <div id='body'>
       <Sidebar :page="page" :changePage="changePage"/>
-      <Display :movies="movies" :page="page" :reload="reload"/>
+      <Display :movies="movies" :page="page" :reload="reload" :changeStatus="changeStatus"/>
     </div>
   </div>
 </template>
@@ -118,19 +118,23 @@
       },
       reload(movie) {
         console.log('reload triggered');
-        // Vue.set(this.personalList, this.personalList.length, movie);
         this.personalList.splice(this.personalList.length, 0, movie);
-        // this.personalList = [...this.personalList, movie];
         this.changePage(this.page);
-        // await axios.get(`http://${window.location.hostname}:3000/personal-list`)
-        //   .then(res => {
-        //     console.log('res: ', res.data);
-        //     this.personalList = res.data
-        //     this.changePage(this.page);
-        //   })
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
+      },
+      changeStatus(movieid, status) {
+        let idx;
+        for (let i = 0; i < this.personalList.length; i++) {
+          if (this.personalList[i].imdbID === movieid) {
+            idx = i;
+            break;
+          }
+        }
+        const updatedEntry = {
+          ...this.personalList[idx],
+          status: status
+        }
+        this.personalList.splice(idx, 1, updatedEntry);
+        this.changePage(this.page);
       }
     },
   }

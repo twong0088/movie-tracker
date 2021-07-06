@@ -38,12 +38,8 @@ const addToWatchList = (movie) => {
   pool.query(`INSERT INTO movielist (title, release_year, imdbID, plot, poster, rating, movie_status) VALUES ('${title}', '${movie.Year}', '${movie.imdbID}', '${plot}', '${movie.Poster}', '${movie.imdbRating}', 'watchList') RETURNING imdbID`)
 }
 
-const addToSeen = (movieId, callback) => {
-  pool.query(`UPDATE movielist SET movie_status = 'seen' WHERE movielist.imdbID = ${movieId}`, (err) => {
-    if (err) {
-      callback(err);
-    }
-  });
+const addToSeen = (movieId) => {
+  pool.query(`UPDATE movielist SET movie_status = 'seen' WHERE movielist.imdbID = '${movieId}' RETURNING imdbid`);
 };
 
 const rewatch = (movieId, callback) => {

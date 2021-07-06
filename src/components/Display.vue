@@ -52,7 +52,8 @@
     props: {
       movies: Array,
       page: String,
-      reload: Function
+      reload: Function,
+      changeStatus: Function
     },
     methods: {
       async addToWatchList(movie) {
@@ -66,7 +67,10 @@
       },
       async addToSeen(movieid) {
         await axios.put(`http://${window.location.hostname}:3000/seen/${movieid}`)
-          .then(() => {console.log('success')})
+          .then(() => {
+            console.log('success')
+            this.changeStatus(movieid, 'seen');
+          })
           .catch((err) => {console.log(err)});
       },
       async remove(movieid) {
