@@ -44,13 +44,15 @@ const init = async () => {
       method: 'GET',
       path: '/personal-list',
       handler: async(request, h) => {
-        psql.getPersonalList((err, res) => {
-          if (err) {
-            return err;
-          } else {
-            return res.data;
-          }
-        });
+        let result;
+        try {
+          result = await psql.getPersonalList()
+        } catch(e) {
+          console.log(e);
+        }
+
+        console.log('result: ', result.rows)
+        return result.rows;
       }
     });
 
@@ -66,13 +68,20 @@ const init = async () => {
       method: 'POST',
       path: '/addtowatch',
       handler: async(request, h) => {
-        psql.addToWatchList(request.body, (err) => {
-          if (err) {
-            return err;
-          } else {
-            return '201';
-          }
-        })
+        let result;
+        try {
+          result = await psql.addToWatchList(request.payload);
+        } catch(err) {
+          console.log(err);
+        }
+        return result ? '201' : 'err';
+        // psql.addToWatchList(request.body, (err) => {
+        //   if (err) {
+        //     return err;
+        //   } else {
+        //     return '201';
+        //   }
+        // })
       }
     })
 

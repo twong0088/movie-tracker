@@ -14,26 +14,26 @@
           <p>Rating: {{movie.imdbRating}}</p>
           <p>{{movie.Plot}}</p>
           <button
-            v-if='page==="search"'
-            @click='() => {this.addToWatchList(movie)}'
+            v-if='page==="results"'
+            @click='() => {addToWatchList(movie)}'
           >
             Add to watch list
           </button>
           <button
             v-if='page==="watchList"'
-            @click='() => {this.addToSeen(movie.imdbID)}'
+            @click='() => {addToSeen(movie.imdbID)}'
           >
             Add to seen
           </button>
           <button
             v-if='page==="watchList"'
-            @click='() => {this.remove(movie.imdbID)}'
+            @click='() => {remove(movie.imdbID)}'
           >
             Remove from watch list
           </button>
           <button
             v-if='page==="seen"'
-            @click='() => {this.rewatch(movie.imdbID)}'
+            @click='() => {rewatch(movie.imdbID)}'
           >
             Rewatch movie
           </button>
@@ -51,12 +51,17 @@
     name: 'Display',
     props: {
       movies: Array,
-      page: String
+      page: String,
+      reload: Function
     },
     methods: {
       async addToWatchList(movie) {
         await axios.post(`http://${window.location.hostname}:3000/addtowatch`, movie)
-          .then(() => {console.log('success')})
+          .then(() => {
+            console.log('success')
+            const watchListEntry = {...movie, status: "watchList"};
+            this.reload(watchListEntry);
+          })
           .catch((err) => {console.log(err)});
       },
       async addToSeen(movieid) {

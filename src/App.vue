@@ -8,12 +8,13 @@
     </div>
     <div id='body'>
       <Sidebar :page="page" :changePage="changePage"/>
-      <Display :movies="movies" :page="page" />
+      <Display :movies="movies" :page="page" :reload="reload"/>
     </div>
   </div>
 </template>
 
 <script>
+  // import Vue from 'vue'
   import Sidebar from './components/Sidebar';
   import Display from './components/Display';
   import Searchbar from './components/Searchbar';
@@ -55,6 +56,7 @@
             this.movies = this.personalList.filter(movie => movie.favorite === true);
             break;
           case 'watchList':
+            console.log(this.personalList.length);
             this.movies = this.personalList.filter(movie => movie.status === 'watchList');
             break;
           case 'seen':
@@ -72,16 +74,30 @@
           .then(res => {
             this.top10 = res.data;
           })
+          .then(() => {
+            this.changePage('home');
+          })
           .catch(err => {
             console.log(err);
           });
 
         await axios.get(`http://${window.location.hostname}:3000/personal-list`)
           .then(res => {
-            this.personalList = res.data
-          })
-          .then(() => {
-            this.changePage('home');
+            console.log('res.data: ', res.data)
+            const list = [];
+            res.data.forEach(movie => {
+              const obj = {
+                Title: movie.title,
+                Year: movie.release_year,
+                imdbID: movie.imdbid,
+                imdbRating: movie.rating,
+                Plot: movie.plot,
+                status: movie.movie_status,
+                Poster: movie.poster
+              }
+              list.push(obj);
+            })
+            this.personalList = list;
           })
           .catch(err => {
             console.log(err);
@@ -99,6 +115,22 @@
           .catch(err => {
             console.log(err);
           })
+      },
+      reload(movie) {
+        console.log('reload triggered');
+        // Vue.set(this.personalList, this.personalList.length, movie);
+        this.personalList.splice(this.personalList.length, 0, movie);
+        // this.personalList = [...this.personalList, movie];
+        this.changePage(this.page);
+        // await axios.get(`http://${window.location.hostname}:3000/personal-list`)
+        //   .then(res => {
+        //     console.log('res: ', res.data);
+        //     this.personalList = res.data
+        //     this.changePage(this.page);
+        //   })
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
       }
     },
   }
